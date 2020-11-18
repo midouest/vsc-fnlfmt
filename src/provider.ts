@@ -1,17 +1,15 @@
-import { dirname } from "path";
-
 import {
-  DocumentFormattingEditProvider,
-  TextDocument,
-  FormattingOptions,
-  TextEdit,
   CancellationToken,
-  workspace,
+  DocumentFormattingEditProvider,
+  FormattingOptions,
   Position,
   Range,
+  TextDocument,
+  TextEdit,
+  workspace,
 } from "vscode";
-
 import { Subprocess } from "./subprocess";
+import { dirname } from "path";
 
 /** Format Fennel code using fnlfmt */
 export class FennelFormatProvider implements DocumentFormattingEditProvider {
