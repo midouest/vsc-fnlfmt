@@ -9,7 +9,7 @@ Use `fnlfmt` to format Fennel code in Visual Studio Code
 
 ## Extension Settings
 
-- `vsc-fnlfmt.exec`: Path to the `fnlfmt` executable
+- `vsc-fnlfmt.execPath`: Path to the `fnlfmt` executable
   - Example: `"/path/to/fnlfmt"`
 
 ## Known Issues

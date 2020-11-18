@@ -6,6 +6,8 @@ import {
   Range,
   TextDocument,
   TextEdit,
+  commands,
+  window,
   workspace,
 } from "vscode";
 import { Subprocess } from "./subprocess";
@@ -18,17 +20,38 @@ export class FennelFormatProvider implements DocumentFormattingEditProvider {
     _options: FormattingOptions,
     token: CancellationToken
   ): Promise<TextEdit[]> {
-    const exec = getFormatter();
-    const formatted = await executeFormatter(exec, document, token);
+    const command = getFormatter();
+    if (!command) {
+      promptConfigureFormatter();
+      return [];
+    }
+
+    const formatted = await executeFormatter(command, document, token);
     const overwrite = overwriteDocument(document, formatted);
     return [overwrite];
   }
 }
 
 /** Get the path to the fnlfmt executable from the configuration */
-function getFormatter(): string {
+function getFormatter(): string | undefined {
   const config = workspace.getConfiguration("vsc-fnlfmt");
-  return config["exec"] ?? "fnlfmt";
+  return config["execPath"];
+}
+
+/** Prompt the user to configure the fnlfmt executable path */
+async function promptConfigureFormatter(): Promise<void> {
+  const action = await window.showInformationMessage(
+    "Path to fnlfmt executable not configured",
+    "Configure..."
+  );
+  if (!action) {
+    return;
+  }
+
+  commands.executeCommand(
+    "workbench.action.openSettings",
+    "vsc-fnlfmt.execPath"
+  );
 }
 
 /**

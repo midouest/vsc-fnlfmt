@@ -24,9 +24,8 @@
         "type": "object",
         "title": "Fennel Format",
         "properties": {
-          "vsc-fnlfmt.exec": {
+          "vsc-fnlfmt.execPath": {
             "type": "string",
-            "default": "fnlfmt",
             "description": "Path to fnlfmt executable",
             "scope": "resource"
           }
