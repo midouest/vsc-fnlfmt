@@ -11,7 +11,6 @@ import {
   workspace,
 } from "vscode";
 import { Subprocess } from "./subprocess";
-import { dirname } from "path";
 
 /** Format Fennel code using fnlfmt */
 export class FennelFormatProvider implements DocumentFormattingEditProvider {
@@ -26,9 +25,14 @@ export class FennelFormatProvider implements DocumentFormattingEditProvider {
       return [];
     }
 
-    const formatted = await executeFormatter(command, document, token);
-    const overwrite = overwriteDocument(document, formatted);
-    return [overwrite];
+    try {
+      const formatted = await executeFormatter(command, document, token);
+      const overwrite = overwriteDocument(document, formatted);
+      return [overwrite];
+    } catch (err) {
+      showErrorMessage(err);
+      return [];
+    }
   }
 }
 
@@ -55,21 +59,32 @@ async function promptConfigureFormatter(): Promise<void> {
 }
 
 /**
+ * Display an error message if the fnlfmt command is not found
+ *
+ * @param err The error to display
+ */
+function showErrorMessage(err: Error | undefined): void {
+  if (err && (<any>err).code === "ENOENT") {
+    const command = getFormatter();
+    window.showErrorMessage(`fnlfmt executable "${command}" not found`);
+  }
+}
+
+/**
  * Execute fnlfmt on a document
  *
- * @param exec Path to the fnlfmt executable
+ * @param command Path to the fnlfmt executable
  * @param document Fennel document to format
  * @param token Cancellation token used to kill the formatter subprocess
  *
  * @returns The formatted Fennel code
  */
 function executeFormatter(
-  exec: string,
+  command: string,
   document: TextDocument,
   token: CancellationToken
 ): Promise<string> {
-  const cwd = dirname(document.fileName);
-  const process = new Subprocess(exec, [document.fileName], cwd);
+  const process = new Subprocess(command, ["-"], document.getText());
   token.onCancellationRequested(() => process.kill());
   return process.closed;
 }
