@@ -21,4 +21,4 @@ Use `fnlfmt` to format Fennel code in Visual Studio Code
 
 ### 1.0.0
 
-- Format Fennel files
+- Initial release
