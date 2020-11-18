@@ -11,7 +11,7 @@ import {
   Range,
 } from "vscode";
 
-import { Process } from "./process";
+import { Subprocess } from "./subprocess";
 
 export class FennelFormatProvider implements DocumentFormattingEditProvider {
   async provideDocumentFormattingEdits(
@@ -37,7 +37,7 @@ function executeFormatter(
   token: CancellationToken
 ): Promise<string> {
   const cwd = dirname(document.fileName);
-  const process = new Process(exec, [document.fileName], cwd);
+  const process = new Subprocess(exec, [document.fileName], cwd);
   token.onCancellationRequested(() => process.kill());
   return process.closed;
 }

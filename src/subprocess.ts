@@ -1,36 +1,42 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 
 /** Promise wrapper around ChildProcess */
-export class Process {
+export class Subprocess {
   /**
    * Promise that resolves when the process exits successfully, or rejects when
    * there is an error.
    */
   readonly closed: Promise<string>;
 
-  protected process: ChildProcessWithoutNullStreams;
+  protected childProcess: ChildProcessWithoutNullStreams;
 
-  /** Spawn a new subprocess */
+  /**
+   * Spawn a new subprocess
+   *
+   * @param command The command to execute in the subprocess
+   * @param args array of arguments to be passed to the command
+   * @param cwd Directory to execute the command in
+   */
   constructor(command: string, args: string[], cwd: string) {
-    this.process = spawn(command, args, { cwd });
+    this.childProcess = spawn(command, args, { cwd });
     this.closed = new Promise((resolve, reject) => {
       let stdout = "";
       let stderr = "";
 
-      this.process.stdout.setEncoding("utf8");
-      this.process.stdout.on("data", (data) => {
+      this.childProcess.stdout.setEncoding("utf8");
+      this.childProcess.stdout.on("data", (data) => {
         stdout += data;
       });
 
-      this.process.stderr.on("data", (data) => {
+      this.childProcess.stderr.on("data", (data) => {
         stderr += data;
       });
 
-      this.process.on("error", (err) => {
+      this.childProcess.on("error", (err) => {
         return reject(err);
       });
 
-      this.process.on("close", (code) => {
+      this.childProcess.on("close", (code) => {
         if (code !== 0) {
           return reject(stderr);
         }
@@ -42,6 +48,6 @@ export class Process {
 
   /** Kill the subprocess */
   kill(): void {
-    !this.process.killed && this.process.kill();
+    !this.childProcess.killed && this.childProcess.kill();
   }
 }
