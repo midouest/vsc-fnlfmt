@@ -7,5 +7,3 @@ export function activate(_context: ExtensionContext) {
     new FennelFormatProvider()
   );
 }
-
-export function deactivate() {}
