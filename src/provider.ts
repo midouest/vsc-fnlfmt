@@ -29,7 +29,7 @@ export class FennelFormatProvider implements DocumentFormattingEditProvider {
       const formatted = await executeFormatter(command, document, token);
       const overwrite = overwriteDocument(document, formatted);
       return [overwrite];
-    } catch (err) {
+    } catch (err: any) {
       showErrorMessage(err);
       return [];
     }
