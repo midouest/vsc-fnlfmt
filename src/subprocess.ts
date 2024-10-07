@@ -19,7 +19,7 @@ export class Subprocess {
    * @param stdin Text to send on stdin to the subprocess
    */
   constructor(command: string, args: string[], stdin: string) {
-    this.childProcess = spawn(command, args);
+    this.childProcess = spawn(command, args, { shell: true });
     this.childProcess.stdin.end(stdin);
 
     this.closed = new Promise((resolve, reject) => {
